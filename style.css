@@ -89,3 +89,31 @@ button:active,.file-btn:active{transform:scale(.98)}
 #renderCanvas{position:fixed;left:-99999px;top:-99999px}
 @media (max-width:1220px){.app-shell{grid-template-columns:1fr}.control-panel{height:auto}.preview-area{min-height:auto}.tiktok-stage{width:min(100%,620px);margin-bottom:20px}.stage-toolbar{padding-top:10px}}
 @media (max-width:720px){.grid.two,.row-grid{grid-template-columns:1fr}.control-panel{padding:12px}.iphone-frame{width:96%;height:97%}.status-bar{font-size:15px}.bubble{font-size:14px}.kbd-row button{min-width:28px;font-size:12px;height:36px}.kbd-row button.wider{min-width:120px}}
+
+
+/* Faster render mode */
+.rendering-video .tiktok-stage,
+.rendering-video .iphone-frame,
+.rendering-video .iphone-screen,
+.rendering-video .chat-header,
+.rendering-video .bubble {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.rendering-video .chat-header,
+.rendering-video .composer-area {
+  backdrop-filter: none !important;
+}
+
+.rendering-video .preview-area {
+  background: #090b11 !important;
+}
+
+.rendering-video .iphone-frame {
+  background: #1a1b20 !important;
+}
+
+.rendering-video .avatar {
+  background: #2f6df6 !important;
+}

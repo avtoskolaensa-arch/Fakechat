@@ -61,7 +61,7 @@ const STORAGE_KEY = "iphone_chat_saved_scenes_v3";
 let isRunning = false, isPaused = false, soundEnabled = true, isRenderingVideo = false, activeTimeout = null, pendingResolve = null, audioCtx = null;
 
 const sampleScene = {
-  meta: { selfName:"გიორგი", otherName:"ნიკა", chatTitle:"ნიკა", statusTime:"20:32", batteryPercent:87, dateLabel:"iMessage • დღეს 20:32", selfAvatar:"გ", otherAvatar:"ნ", selfSide:"right", speedMultiplier:1, runDelay:3, bgTone:"#f5f5f7", videoFps:12, videoScale:1.5 },
+  meta: { selfName:"გიორგი", otherName:"ნიკა", chatTitle:"ნიკა", statusTime:"20:32", batteryPercent:87, dateLabel:"iMessage • დღეს 20:32", selfAvatar:"გ", otherAvatar:"ნ", selfSide:"right", speedMultiplier:1, runDelay:3, bgTone:"#f5f5f7", videoFps:20, videoScale:1.25 },
   messages: [
     { speaker:"other", text:"გიო რას შვები 👀", delay:800, typingDuration:1100, showTyping:true, timestamp:"", sound:"auto", readLabel:"" },
     { speaker:"self", text:"ვიდეოსთვის ჩატს ვაწყობ ახლა 😄", delay:550, typingDuration:1500, showTyping:true, timestamp:"წაკითხულია", sound:"auto", readLabel:"Read 20:33" },
@@ -98,8 +98,8 @@ function getMetaFromInputs(){
     speedMultiplier: Number(els.speedMultiplier.value) || 1,
     runDelay: Number(els.runDelay.value) || 0,
     bgTone: els.bgTone.value || "#f5f5f7",
-    videoFps: Number(els.videoFps.value) || 12,
-    videoScale: Number(els.videoScale.value) || 1.5
+    videoFps: Number(els.videoFps.value) || 20,
+    videoScale: Number(els.videoScale.value) || 1.25
   };
 }
 function sanitizeMessage(msg){
@@ -133,7 +133,7 @@ function populateMetaInputs(meta){
   els.statusTime.value = meta.statusTime ?? "20:32"; els.batteryPercent.value = meta.batteryPercent ?? 87; els.dateLabel.value = meta.dateLabel ?? "";
   els.selfAvatar.value = meta.selfAvatar ?? ""; els.otherAvatar.value = meta.otherAvatar ?? ""; els.selfSide.value = meta.selfSide ?? "right";
   els.speedMultiplier.value = String(meta.speedMultiplier ?? 1); els.runDelay.value = meta.runDelay ?? 3; els.bgTone.value = meta.bgTone ?? "#f5f5f7";
-  els.videoFps.value = String(meta.videoFps ?? 12); els.videoScale.value = String(meta.videoScale ?? 1.5);
+  els.videoFps.value = String(meta.videoFps ?? 20); els.videoScale.value = String(meta.videoScale ?? 1.25);
   applyMetaToPreview(getMetaFromInputs());
 }
 function createBuilderRow(data = {}){
@@ -240,6 +240,7 @@ async function renderStageToCanvas(canvas, scale = 1.5){
 }
 
 async function renderVideoAndDownload(){
+  document.body.classList.add("rendering-video");
   if(isRunning || isRenderingVideo) return;
   try{
     if(typeof html2canvas === "undefined") throw new Error("html2canvas library ვერ ჩაიტვირთა");
@@ -249,8 +250,8 @@ async function renderVideoAndDownload(){
     syncJsonFromUI();
     const scene=parseSceneJson();
     const meta={...sampleScene.meta, ...scene.meta};
-    const fps=Number(meta.videoFps || 12);
-    const scale=Number(meta.videoScale || 1.5);
+    const fps=Math.max(12, Number(meta.videoFps || 20));
+    const scale=Math.max(1, Number(meta.videoScale || 1.25));
 
     isRenderingVideo=true;
     els.renderVideoBtn.disabled=true;
@@ -274,13 +275,18 @@ async function renderVideoAndDownload(){
     const stopPromise = new Promise((resolve)=>{ recorder.onstop = resolve; });
 
     recorder.start(200);
-    setStatus("რენდერი მიმდინარეობს...");
+    setStatus(`რენდერი მიმდინარეობს... ${fps} FPS / scale ${scale}`);
 
     const runPromise = runScene(scene);
 
+    const frameDelay = Math.max(20, 1000 / fps);
+    let nextTick = performance.now();
+
     while(isRenderingVideo && isRunning){
       await renderStageToCanvas(els.renderCanvas, scale);
-      await new Promise((r)=>setTimeout(r, Math.max(40, 1000/fps)));
+      nextTick += frameDelay;
+      const wait = Math.max(0, nextTick - performance.now());
+      await new Promise((r)=>setTimeout(r, wait));
     }
 
     await runPromise;
@@ -311,6 +317,7 @@ async function renderVideoAndDownload(){
     isRenderingVideo=false;
     els.renderVideoBtn.disabled=false;
     els.runBtn.disabled=false;
+    document.body.classList.remove("rendering-video");
   }
 }
 

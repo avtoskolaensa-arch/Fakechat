@@ -11,8 +11,8 @@
   <div class="app-shell">
     <aside class="control-panel" id="controlPanel">
       <div class="panel-header">
-        <h1>iPhone Chat Builder Pro</h1>
-        <p>სცენა ააწყე, შეინახე, გაუშვი ან პირდაპირ WEBM ვიდეოდ ჩამოტვირთე.</p>
+        <h1>iPhone Chat Builder Pro v4</h1>
+        <p>სცენა ააწყე, შეინახე, გაუშვი ან WEBM ვიდეოდ ჩამოტვირთე. ეს ვერსია უფრო გლუვ render-ზეა აწყობილი.</p>
       </div>
 
       <section class="card">
@@ -48,17 +48,19 @@
           <label>ფონის ფერი<input id="bgTone" type="color" value="#f5f5f7" /></label>
           <label>ვიდეო FPS
             <select id="videoFps">
-              <option value="8">8</option>
-              <option value="10">10</option>
-              <option value="12" selected>12</option>
+              <option value="12">12</option>
               <option value="15">15</option>
+              <option value="20" selected>20</option>
+              <option value="24">24</option>
+              <option value="30">30</option>
             </select>
           </label>
           <label>ვიდეო ხარისხი
             <select id="videoScale">
-              <option value="1">Normal</option>
-              <option value="1.5" selected>Better</option>
-              <option value="2">High</option>
+              <option value="1">Fast</option>
+              <option value="1.25" selected>Smooth HD</option>
+              <option value="1.5">Sharp</option>
+              <option value="2">Ultra</option>
             </select>
           </label>
         </div>
@@ -112,7 +114,7 @@
           </label>
         </div>
         <textarea id="sceneJson" spellcheck="false"></textarea>
-        <p class="hint">თუ WEBM რენდერი არ გაეშვა, ახალი ვერსია უკვე status-ში დაწერს ზუსტად სად გაჭედა.</p>
+        <p class="hint">რჩევა: Smooth HD + 20 FPS ყველაზე კარგი ბალანსია. Ultra ხარისხი უფრო ლამაზია, მაგრამ შეიძლება დაანელოს render.</p>
       </section>
     </aside>
 
