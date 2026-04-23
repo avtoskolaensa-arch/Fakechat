@@ -117,3 +117,46 @@ button:active,.file-btn:active{transform:scale(.98)}
 .rendering-video .avatar {
   background: #2f6df6 !important;
 }
+
+
+/* v5 layout fixes */
+.iphone-screen {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.messages-scroll {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
+.composer-area {
+  margin-top: auto !important;
+  flex-shrink: 0 !important;
+}
+
+.input-pill {
+  min-height: 38px !important;
+  height: auto !important;
+  align-items: flex-start !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+.typed-draft,
+.placeholder {
+  display: block !important;
+  width: 100% !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  line-height: 1.25 !important;
+}
+
+.composer-bar {
+  align-items: end !important;
+}
+
+.kbd-row.bottom button.wider {
+  min-width: 150px;
+}
