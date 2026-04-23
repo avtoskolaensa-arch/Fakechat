@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iPhone Chat Video Builder Pro</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="control-panel" id="controlPanel">
+      <div class="panel-header">
+        <h1>iPhone Chat Builder Pro</h1>
+        <p>სცენა ააწყე, შეინახე, გაუშვი ან პირდაპირ WEBM ვიდეოდ ჩამოტვირთე.</p>
+      </div>
+
+      <section class="card">
+        <h2>ჩატის პარამეტრები</h2>
+        <div class="grid two">
+          <label>შენი სახელი<input id="selfName" type="text" value="გიორგი" /></label>
+          <label>მეორე ადამიანის სახელი<input id="otherName" type="text" value="ნიკა" /></label>
+          <label>ჩატის სათაური<input id="chatTitle" type="text" value="ნიკა" /></label>
+          <label>საწყისი დრო<input id="statusTime" type="text" value="20:32" /></label>
+          <label>ბატარეა %<input id="batteryPercent" type="number" min="1" max="100" value="87" /></label>
+          <label>თარიღის ტექსტი<input id="dateLabel" type="text" value="iMessage • დღეს 20:32" /></label>
+          <label>შენი ავატარი<input id="selfAvatar" type="text" value="გ" /></label>
+          <label>მეორე ადამიანის ავატარი<input id="otherAvatar" type="text" value="ნ" /></label>
+        </div>
+
+        <div class="grid two">
+          <label>შენი მხარე
+            <select id="selfSide">
+              <option value="right" selected>მარჯვენა</option>
+              <option value="left">მარცხენა</option>
+            </select>
+          </label>
+          <label>სიჩქარე
+            <select id="speedMultiplier">
+              <option value="0.75">0.75x</option>
+              <option value="1" selected>1x</option>
+              <option value="1.25">1.25x</option>
+              <option value="1.5">1.5x</option>
+              <option value="2">2x</option>
+            </select>
+          </label>
+          <label>Run-ის delay (წმ)<input id="runDelay" type="number" min="0" max="10" value="3" /></label>
+          <label>ფონის ფერი<input id="bgTone" type="color" value="#f5f5f7" /></label>
+          <label>ვიდეო FPS
+            <select id="videoFps">
+              <option value="8">8</option>
+              <option value="10">10</option>
+              <option value="12" selected>12</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+          <label>ვიდეო ხარისხი
+            <select id="videoScale">
+              <option value="1">Normal</option>
+              <option value="1.5" selected>Better</option>
+              <option value="2">High</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="toolbar">
+          <button id="applyMetaBtn" class="secondary">Apply Header</button>
+          <button id="toggleRecordModeBtn" class="secondary">Record Mode</button>
+          <button id="toggleSoundBtn" class="secondary">Sound: ON</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>სცენების ბიბლიოთეკა</h2>
+        <div class="grid two">
+          <label>სცენის სახელი<input id="sceneName" type="text" value="ჩემი სცენა 1" /></label>
+          <label>შენახული სცენები<select id="savedScenes"></select></label>
+        </div>
+        <div class="toolbar wrap">
+          <button id="saveSceneBtn" class="success">Save Scene</button>
+          <button id="loadSavedSceneBtn" class="secondary">Load Selected</button>
+          <button id="deleteSavedSceneBtn" class="danger">Delete Selected</button>
+        </div>
+        <p class="hint">რამდენიც გინდა იმდენი სცენა შეგიძლია შეინახო ბრაუზერში.</p>
+      </section>
+
+      <section class="card">
+        <div class="section-title-row">
+          <h2>მესიჯები</h2>
+          <div class="toolbar compact">
+            <button id="addMessageBtn" class="secondary">+ Add Message</button>
+            <button id="clearMessagesBtn" class="danger">Clear</button>
+          </div>
+        </div>
+        <div id="messageBuilder" class="message-builder"></div>
+      </section>
+
+      <section class="card">
+        <h2>სცენის მართვა</h2>
+        <div class="toolbar wrap">
+          <button id="loadSampleBtn">Load Sample</button>
+          <button id="runBtn" class="success">Run</button>
+          <button id="renderVideoBtn" class="success">Render Video WEBM</button>
+          <button id="pauseBtn" class="secondary">Pause</button>
+          <button id="resumeBtn" class="secondary">Resume</button>
+          <button id="resetBtn" class="secondary">Reset</button>
+          <button id="copySceneBtn" class="secondary">Copy JSON</button>
+          <button id="downloadSceneBtn" class="secondary">Download JSON</button>
+          <label class="file-btn secondary">
+            Load JSON
+            <input id="sceneFileInput" type="file" accept=".json,application/json" />
+          </label>
+        </div>
+        <textarea id="sceneJson" spellcheck="false"></textarea>
+        <p class="hint">თუ WEBM რენდერი არ გაეშვა, ახალი ვერსია უკვე status-ში დაწერს ზუსტად სად გაჭედა.</p>
+      </section>
+    </aside>
+
+    <main class="preview-area" id="previewArea">
+      <div class="stage-toolbar">
+        <div class="stage-note" id="stageNote">TikTok-ready 1080×1920 preview</div>
+        <button id="fullscreenStageBtn" class="secondary">Fullscreen Stage</button>
+      </div>
+
+      <div class="tiktok-stage" id="tiktokStage">
+        <div class="countdown hidden" id="countdown"></div>
+
+        <div class="iphone-frame">
+          <div class="iphone-screen" id="iphoneScreen">
+            <div class="status-bar">
+              <div class="status-time" id="statusTimeDisplay">20:32</div>
+              <div class="status-icons">
+                <span class="signal-icon"><i></i><i></i><i></i><i></i></span>
+                <span class="wifi-icon">◜◝</span>
+                <span class="battery-wrap">
+                  <span class="battery-text" id="batteryText">87%</span>
+                  <span class="battery-icon"><span class="battery-level" id="batteryLevel"></span></span>
+                </span>
+              </div>
+            </div>
+
+            <div class="notch"></div>
+
+            <header class="chat-header">
+              <div class="header-left">‹</div>
+              <div class="contact-block">
+                <div class="avatar large" id="headerAvatar">ნ</div>
+                <div class="contact-meta">
+                  <div class="contact-name" id="headerName">ნიკა</div>
+                  <div class="contact-sub" id="headerSub">iMessage</div>
+                </div>
+              </div>
+              <div class="header-right">i</div>
+            </header>
+
+            <div class="date-separator" id="dateSeparator">iMessage • დღეს 20:32</div>
+
+            <section class="messages-scroll" id="messagesScroll">
+              <div class="messages-list" id="messagesList"></div>
+              <div class="typing-row hidden" id="typingRow">
+                <div class="bubble bubble-left typing-bubble">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+            </section>
+
+            <div class="composer-area">
+              <div class="composer-bar">
+                <button class="mini-btn">＋</button>
+                <div class="input-pill" id="inputPill">
+                  <span id="typedDraft" class="typed-draft"></span>
+                  <span class="placeholder" id="inputPlaceholder">iMessage</span>
+                </div>
+                <button class="send-btn" id="sendBtnPreview">↑</button>
+              </div>
+
+              <div class="keyboard" id="keyboard">
+                <div class="kbd-row">
+                  <button data-key="ქ">ქ</button><button data-key="წ">წ</button><button data-key="ე">ე</button><button data-key="რ">რ</button><button data-key="ტ">ტ</button><button data-key="ყ">ყ</button><button data-key="უ">უ</button><button data-key="ი">ი</button><button data-key="ო">ო</button><button data-key="პ">პ</button>
+                </div>
+                <div class="kbd-row">
+                  <button data-key="ა">ა</button><button data-key="ს">ს</button><button data-key="დ">დ</button><button data-key="ფ">ფ</button><button data-key="გ">გ</button><button data-key="ჰ">ჰ</button><button data-key="ჯ">ჯ</button><button data-key="კ">კ</button><button data-key="ლ">ლ</button>
+                </div>
+                <div class="kbd-row">
+                  <button class="wide light" data-key="shift">⇧</button><button data-key="ზ">ზ</button><button data-key="ხ">ხ</button><button data-key="ც">ც</button><button data-key="ვ">ვ</button><button data-key="ბ">ბ</button><button data-key="ნ">ნ</button><button data-key="მ">მ</button><button class="wide light" data-key="backspace">⌫</button>
+                </div>
+                <div class="kbd-row bottom">
+                  <button class="light" data-key="emoji">😊</button>
+                  <button class="light wider" data-key="space">space</button>
+                  <button class="light" data-key="return">return</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <canvas id="renderCanvas" class="hidden"></canvas>
+    </main>
+  </div>
+
+  <template id="messageRowTemplate">
+    <div class="msg-row-editor">
+      <div class="row-grid">
+        <label>ვინ წერს
+          <select data-field="speaker">
+            <option value="self">მე</option>
+            <option value="other">მეორე</option>
+          </select>
+        </label>
+        <label>ტექსტი<textarea data-field="text"></textarea></label>
+        <label>Delay (ms)<input data-field="delay" type="number" min="0" value="600" /></label>
+        <label>Typing (ms)<input data-field="typingDuration" type="number" min="0" value="1200" /></label>
+        <label>მესიჯამდე typing
+          <select data-field="showTyping">
+            <option value="true" selected>კი</option>
+            <option value="false">არა</option>
+          </select>
+        </label>
+        <label>დრო ქვემოთ<input data-field="timestamp" type="text" value="" /></label>
+        <label>ხმა
+          <select data-field="sound">
+            <option value="auto" selected>Auto</option>
+            <option value="send">Send</option>
+            <option value="receive">Receive</option>
+            <option value="none">None</option>
+          </select>
+        </label>
+        <label>Read status<input data-field="readLabel" type="text" value="" /></label>
+      </div>
+      <div class="toolbar compact">
+        <button class="secondary move-up-btn" type="button">↑</button>
+        <button class="secondary move-down-btn" type="button">↓</button>
+        <button class="danger remove-msg-btn" type="button">Delete</button>
+      </div>
+    </div>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
